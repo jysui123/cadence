@@ -175,7 +175,7 @@ init_env() {
         fi
     else
         array=(${RINGPOP_SEEDS//,/ })
-        export RINGPOP_SEEDS_JSON_ARRAY=$(json_array "${array[@]}")
+        #export RINGPOP_SEEDS_JSON_ARRAY=$(json_array "${array[@]}")
     fi
 }
 
