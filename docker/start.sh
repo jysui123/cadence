@@ -155,7 +155,24 @@ init_env() {
     export BIND_ON_LOCALHOST=false
 
     if [ -z "$RINGPOP_SEEDS" ]; then
-        export RINGPOP_SEEDS_JSON_ARRAY="[\"$HOST_IP:7933\",\"$HOST_IP:7934\",\"$HOST_IP:7935\",\"$HOST_IP:7939\"]"
+        if [ -z "$SERVICES" ]; then
+            export RINGPOP_SEEDS_JSON_ARRAY="[\"$HOST_IP:7933\",\"$HOST_IP:7934\",\"$HOST_IP:7935\",\"$HOST_IP:7939\"]"
+        else
+            export RINGPOP_SEEDS_JSON_ARRAY="["
+            if [[ $SERVICES == *"frontend"* ]]; then
+                RINGPOP_SEEDS_JSON_ARRAY="${RINGPOP_SEEDS_JSON_ARRAY}\"$HOST_IP:7933\","
+            fi
+            if [[ $SERVICES == *"matching"* ]]; then
+                RINGPOP_SEEDS_JSON_ARRAY="${RINGPOP_SEEDS_JSON_ARRAY}\"$HOST_IP:7934\","
+            fi
+            if [[ $SERVICES == *"history"* ]]; then
+                RINGPOP_SEEDS_JSON_ARRAY="${RINGPOP_SEEDS_JSON_ARRAY}\"$HOST_IP:7935\","
+            fi
+            if [[ $SERVICES == *"worker"* ]]; then
+                RINGPOP_SEEDS_JSON_ARRAY="${RINGPOP_SEEDS_JSON_ARRAY}\"$HOST_IP:7939\","
+            fi
+            RINGPOP_SEEDS_JSON_ARRAY="${RINGPOP_SEEDS_JSON_ARRAY:0:-1}]"
+        fi
     else
         array=(${RINGPOP_SEEDS//,/ })
         export RINGPOP_SEEDS_JSON_ARRAY=$(json_array "${array[@]}")
