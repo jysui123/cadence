@@ -23,7 +23,7 @@
 CADENCE_HOME=$1
 DB="${DB:-cassandra}"
 CFG_TEMPLATE=docker_template_$DB.yaml
-SERVICES="${SERVICES:-history,matching,frontend,worker}"
+SERVICES="${SERVICES:-history}"
 RF=${RF:-1}
 export LOG_LEVEL="${LOG_LEVEL:-info}"
 export NUM_HISTORY_SHARDS=${NUM_HISTORY_SHARDS:-4}
@@ -127,7 +127,25 @@ init_env() {
     export BIND_ON_LOCALHOST=false
 
     if [ -z "$RINGPOP_SEEDS" ]; then
-        export RINGPOP_SEEDS_JSON_ARRAY="[\"$HOST_IP:7933\",\"$HOST_IP:7934\",\"$HOST_IP:7935\",\"$HOST_IP:7939\"]"
+        #export RINGPOP_SEEDS_JSON_ARRAY="[\"$HOST_IP:7933\",\"$HOST_IP:7934\",\"$HOST_IP:7935\",\"$HOST_IP:7939\"]"
+        if [ -z "$SERVICES" ]; then
+            export RINGPOP_SEEDS_JSON_ARRAY="[\"$HOST_IP:7933\",\"$HOST_IP:7934\",\"$HOST_IP:7935\",\"$HOST_IP:7939\"]"
+        else
+            export RINGPOP_SEEDS_JSON_ARRAY="["
+            if [[ $SERVICES == *"frontend"* ]]; then
+                RINGPOP_SEEDS_JSON_ARRAY="${RINGPOP_SEEDS_JSON_ARRAY}\"$HOST_IP:7933\","
+            fi
+            if [[ $SERVICES == *"matching"* ]]; then
+                RINGPOP_SEEDS_JSON_ARRAY="${RINGPOP_SEEDS_JSON_ARRAY}\"$HOST_IP:7934\","
+            fi
+            if [[ $SERVICES == *"history"* ]]; then
+                RINGPOP_SEEDS_JSON_ARRAY="${RINGPOP_SEEDS_JSON_ARRAY}\"$HOST_IP:7935\","
+            fi
+            if [[ $SERVICES == *"worker"* ]]; then
+                RINGPOP_SEEDS_JSON_ARRAY="${RINGPOP_SEEDS_JSON_ARRAY}\"$HOST_IP:7939\","
+            fi
+            RINGPOP_SEEDS_JSON_ARRAY="${RINGPOP_SEEDS_JSON_ARRAY:0:-1}]"
+        fi
     else
         array=(${RINGPOP_SEEDS//,/ })
         export RINGPOP_SEEDS_JSON_ARRAY=$(json_array "${array[@]}")
