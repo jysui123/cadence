@@ -170,7 +170,7 @@ var keys = map[Key]string{
 	DefaultEventEncoding:                                  "history.defaultEventEncoding",
 	EnableAdminProtection:                                 "history.enableAdminProtection",
 	AdminOperationToken:                                   "history.adminOperationToken",
-	EnableEventsV2:                                        "history.enableEventsV2",
+	EnableEventsV2:                                        "history.enableEventsV2-wrong",
 	NumArchiveSystemWorkflows:                             "history.numArchiveSystemWorkflows",
 	ArchiveRequestRPS:                                     "history.archiveRequestRPS",
 	EmitShardDiffLog:                                      "history.emitShardDiffLog",
